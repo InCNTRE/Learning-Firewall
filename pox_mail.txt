@@ -1,0 +1,17 @@
+Here is the pox developers reply(in red) to my question 
+ 
+ Well, your threaded code has the most obvious problem that you are trying to call the thread's .run() in a loop instead of calling .start() which is how you actually start a new thread.  But in general, you're probably better off not writing normal threaded code in POX if you don't have to.  One reason for this is that you have to worry about synchronization, which your example doesn't seem to be doing.
+>
+> when I use .start() the method fetching data gives me an error ,therefore i tried using .run() which returned me the flows but blocked the core going up
+>
+> You don't say what problem you're running into with the recoco Task version.  You also don't say what it's really supposed to be doing, and it's kind of hard to tell because a good chunk of the code has been removed.  I am guessing that your firewall is supposed to be taking input (policies) from something else over a socket?  If that's the case, one easy option might be to use the messenger component, which can receive JSON messages from a socket or an HTTP connection and will raise events in response to them (obviously this only works if you get to dictate the communication protocol that's used to communicate with the firewall).
+>
+>  I was not getting any errors with recoco task version . l2_learning module would implement the flows but the firewall module didnt do anything. The reason as you pointed out may be I need to add a listener accepting connections.
+>
+> One observation is that it looks like you're planning to create an instance of Firewall for every connection, and I'm not sure if that's really your intention (it doesn't seem to be in the threaded example).
+>
+> I directly took the recoco event loop example and inserted my firewall code directly  in the  def handle_read_events(self)  method. This method is being called by the run method of event loop. I tried to implement in similar fashion as threading. Can you please point out which part of the code is doing it
+>
+> Another observation is that there doesn't seem to be a way to actually add a socket to Firewall's socket list (e.g., you don't have a listener accepting connections or anything else making active connections).
+>
+> so do I have to add self.listenTo(core.openflow)  to the init method of class firewall. if no can you please give some small example how to do that?
